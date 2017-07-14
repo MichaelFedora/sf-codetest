@@ -1,0 +1,5 @@
+Flask==0.12.2
+Flask-Cors==3.0.3
+marshmallow==2.13.5
+rethinkdb==2.3.0.post6
+gevent==1.2.2

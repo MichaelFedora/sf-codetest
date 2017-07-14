@@ -1,0 +1,92 @@
+
+div#app {
+  #toolbar {
+    position: fixed;
+    max-height: 64px;
+    width: 100%;
+    top: 0;
+    z-index: 64;
+  }
+
+  padding-top: 64px;
+
+  #list {
+    .contact {
+      .list-data {
+        display: flex;
+        justify-content: space-between;
+        flex-grow: 1;
+        margin-right: 8px;
+        span {
+          padding: 2px;
+        }
+
+        > div.top-row {
+          display: flex;
+          justify-content: space-between;
+        }
+
+        @media(min-width: 600px) {
+          > * {
+            flex-basis: 25%;
+          }
+          > div.top-row {
+            flex-basis: 50%;
+            > * {
+              flex-basis: 50%;
+            }
+          }
+        }
+        @media(max-width: 600px) {
+          flex-wrap: wrap;
+          > div.top-row {
+            flex-basis: 100%;
+          }
+        }
+      }
+
+    .actions {
+        display: flex;
+        justify-content: space-around;
+        z-index: 0;
+        @media(min-width: 600px) {
+          opacity: 0;
+          transition: opacity 0.1s;
+        }
+        @media(max-width: 600px) {
+          flex-wrap: wrap;
+        }
+        > * {
+          margin: 0;
+          flex-grow: 0;
+        }
+      }
+
+      transition: background-color 0.1s;
+
+      @media(min-width: 600px) {
+        &:hover {
+          .actions {
+            opacity: 1;
+          }
+          background-color: rgba(0, 0, 0, 0.15);
+        }
+      }
+    }
+  }
+
+  padding-bottom: 104px;
+
+  #add {
+    position: fixed;
+  }
+}
+
+#app-dialog {
+  .form-one-line {
+    display: flex;
+    @media(max-width: 600px) {
+      display: block;
+    }
+  }
+}
