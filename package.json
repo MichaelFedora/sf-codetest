@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "a codetest",
   "scripts": {
-    "start": "http-server ./dist -p 4200"
+    "start": "http-server ./dist -p 4200",
+    "gulp:build": "gulp build"
   },
   "author": "Michael Fedora",
   "license": "MIT",
