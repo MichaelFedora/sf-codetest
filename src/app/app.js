@@ -1,13 +1,14 @@
 import axios from 'axios';
 import env from '../env';
 import moment from 'moment';
+import { Contact } from '../data/contact';
 
 export default {
   name: 'app',
   data() {
     return {
       contacts: [],
-      contact: null,
+      contact: new Contact(),
     }
   },
   created() {
@@ -16,7 +17,7 @@ export default {
   methods: {
     refresh() {
       axios.get(env.apiUrl + '/contacts').then(response => {
-        this.contacts.splice(0, this.contacts.length, ...response.data);
+        this.contacts.splice(0, this.contacts.length, ...response.data.map(a => new Contact(a)));
         this.sort();
       }, e => console.error(e));
     },
@@ -27,14 +28,14 @@ export default {
     },
     add(contact) {
       axios.post(env.apiUrl + '/contacts', contact).then(response => {
-        this.contacts.push(response.data);
+        this.contacts.push(new Contact(response.data));
         this.sort();
       }, e => console.error(e));
       this.$refs.dialog.close();
     },
     update(contact) {
       axios.put(env.apiUrl + '/contacts', contact).then(response => {
-        Object.assign(this.contacts.find(a => a.id === contact.id), contact);
+        this.contacts.find(a => a.id === contact.id).setTo(contact);
         this.sort();
       }, e => console.error(e))
     },
@@ -44,23 +45,17 @@ export default {
       }, e => console.error(e));
     },
     save() {
-      const c = Object.assign({}, this.contact);
-      c.dob = new Date(c.dob).toISOString();
-      console.log(this.contact.dob, c.dob);
-      if(c.id) this.update(c);
-      else this.add(c);
+      if(this.contact.id) this.update(this.contact.serialize());
+      else this.add(this.contact.serialize());
       this.$refs.dialog.close();
     },
     showDialog(contact) {
-      this.contact = contact ? Object.assign({}, contact) : {};
-      this.contact.dob = moment.utc(this.contact.dob).format('YYYY-MM-DD');
-      this.$refs.dialog.open();
+      this.contact.setTo(contact || new Contact());
+      this.$nextTick(() => { this.errors.clear(); this.$refs.dialog.open(); });
     },
     cancel() {
       this.$refs.dialog.close();
     },
-    format(dob, forInput) {
-      return moment.utc(new Date(dob)).format('MM/DD/YYYY');
-    }
+    submit(e) { console.log('submit', e); }
   }
 }

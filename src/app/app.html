@@ -3,41 +3,41 @@
   <md-dialog id='app-dialog' ref='dialog'>
     <md-dialog-title>{{contact && contact.id ? 'Edit' : 'Add'}} Contact</md-dialog-title>
     <md-dialog-content>
-      <form @submit.stop.prevent="submit" v-if='contact'>
+      <form @submit.stop.prevent='submit' v-if='contact'>
         <div class='form-one-line'>
           <md-input-container :class='{"md-input-invalid": errors.has("firstname")}'>
             <label>First Name</label>
-            <md-input name='firstname' type='text' v-validate='"required|alpha"' v-model='contact.firstname' required></md-input>
-            <span class='md-error'>Required</span>
+            <md-input name='firstname' type='text' v-validate="{rules: {required: true, regex: /^[a-zA-Z\-\'\s]+$/}}" v-model='contact.firstname' required></md-input>
+            <span class='md-error'>Must be letters only</span>
           </md-input-container>
 
           <md-input-container :class='{"md-input-invalid": errors.has("lastname")}'>
             <label>Last Name</label>
-            <md-input name='lastname' type='text' v-validate='"required|alpha"' v-model='contact.lastname' required></md-input>
-            <span class='md-error'>Required</span>
+            <md-input name='lastname' type='text' v-validate="{rules: {required: true, regex: /^[a-zA-Z\-\'\s]+$/}}" v-model='contact.lastname' required></md-input>
+            <span class='md-error'>Must be letters only</span>
           </md-input-container>
         </div>
         <md-input-container :class='{"md-input-invalid": errors.has("phone")}'>
           <label>Phone Number</label>
-          <md-input name='phone' type='tel' v-validate='{rules: { required: true, regex: /\d{3}-\d{3}-\d{4}/}}' v-model='contact.phone' required></md-input>
-          <span class='md-error'>Must be in the format: ###-###-####</span>
+          <md-input name='phone' type='tel' maxlength='11' v-validate='{rules: {required: true, regex: /^\d{10,11}$/}}' v-model='contact.phone' required></md-input>
+          <span class='md-error'>Must be numbers only</span>
         </md-input-container>
 
         <md-input-container :class='{"md-input-invalid": errors.has("zip")}'>
           <label>Zipcode</label>
-          <md-input name='zip' v-validate='"digits:5"' maxlength='5' v-model='contact.zip' required></md-input>
+          <md-input name='zip' v-validate='"required|digits:5"' maxlength='5' v-model='contact.zip' required></md-input>
           <span class='md-error'>Must have 5 digits</span>
         </md-input-container>
 
         <md-input-container :class='{"md-input-invalid": errors.has("dob")}'>
           <label>Date of Birth</label>
-          <md-input name='dob' v-validate='"date_format:YYY-MM-DD"' type='date'  v-model='contact.dob' required></md-input>
+          <md-input name='dob' v-validate='"required|date_format:YYY-MM-DD"' type='date'  v-model='contact.dob' required></md-input>
           <span class='md-error'>Required</span>
         </md-input-container>
       </form>
     </md-dialog-content>
     <md-dialog-actions>
-      <md-button class='md-primary' @click='save()' :disabled='errors.errors.length > 0'>{{contact && contact.id ? 'Save' : 'Add'}}</md-button>
+      <md-button class='md-primary' @click='save()' :disabled='errors.any() || contact.empty()'>{{contact && contact.id ? 'Save' : 'Add'}}</md-button>
       <md-button class='md-primary' @click='cancel()'>Cancel</md-button>
     </md-dialog-actions>
   </md-dialog>
@@ -45,6 +45,12 @@
   <md-whiteframe id='toolbar'>
     <md-toolbar>
       <div class='md-title'>Contacts</div>
+      <div style='flex:1'></div>
+      <div>
+        <md-button class='md-icon-button' @click='refresh()'>
+          <md-icon>refresh</md-icon>
+        </md-button>
+      </div>
     </md-toolbar>
   </md-whiteframe>
 
@@ -53,9 +59,9 @@
       <div class='list-data'>
         <div class='top-row'>
           <span>{{c.firstname}} {{c.lastname}}</span>
-          <span>{{format(c.dob)}}</span>
+          <span>{{c.formattedDob()}}</span>
         </div>
-        <span>{{c.phone}}</span>
+        <span>{{c.formattedPhone()}}</span>
         <span>{{c.zip}}</span>
       </div>
       <div class='actions'>
